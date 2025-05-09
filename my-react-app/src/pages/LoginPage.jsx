@@ -33,7 +33,7 @@ export default function Login() {
             <Box sx={{mt : 2, width: '100%', mb: 1,paddingBottom:'10px' }}>
               <TextField
                 fullWidth
-                label="Username"
+                label="Email"
                 variant="outlined"
                 size="small"
                 autoComplete="off"
