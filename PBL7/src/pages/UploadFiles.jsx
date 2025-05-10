@@ -11,7 +11,7 @@ import {
 import './UploadFiles.css';
 
 function UploadFiles() {
-  // Dummy data for resume files
+  // Dummy data
   const [resumeFiles, setResumeFiles] = useState([
     { id: 1, name: 'Name File PDF.pdf', size: '12.9 Mb' },
     { id: 2, name: 'Name File PDF.pdf', size: '12.9 Mb' },

@@ -5,7 +5,7 @@ import './EmailVerification.css';
 
 function EmailVerification() {
   const [verificationCode, setVerificationCode] = useState('');
-  const email = 'emailaddress@gmail.com'; // This would come from a context or props in a real app
+  const email = 'emailaddress@gmail.com'; 
 
   const handleSubmit = (e) => {
     e.preventDefault();

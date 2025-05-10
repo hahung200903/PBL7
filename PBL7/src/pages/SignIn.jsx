@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FaBriefcase, FaEye, FaEyeSlash, FaArrowRight } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import '../index.css';
 import './SignIn.css';
 
@@ -8,11 +9,16 @@ function SignIn() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle login logic here
+    // Handle login logic
     console.log({ email, password, rememberMe });
+
+    // For now, just navigate to dashboard without authentication
+    // In a real app, you would verify credentials first
+    navigate('/dashboard');
   };
 
   return (

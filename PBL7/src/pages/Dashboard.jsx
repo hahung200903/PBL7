@@ -13,7 +13,7 @@ import {
 import './Dashboard.css';
 
 function Dashboard() {
-  // Dummy data for sessions
+  // Dummy data
   const sessions = [
     { id: 1, name: 'AI Resume', description: true, resumeCount: 18 },
     { id: 2, name: 'AI Resume', description: true, resumeCount: 18 },

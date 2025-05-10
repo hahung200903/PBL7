@@ -11,7 +11,7 @@ function ResetPassword() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle password reset logic here
+    // Handle password reset
     console.log({ newPassword, confirmPassword });
   };
 
