@@ -1,33 +1,59 @@
 import { useState, useEffect } from 'react';
 import {
-  FaBriefcase,
-  FaSignOutAlt,
-  FaTachometerAlt,
-  FaLayerGroup,
-  FaCog,
-  FaUserFriends,
-  FaFileAlt,
-  FaCheckCircle,
-  FaPlus,
-  FaExpand,
-  FaCompress
-} from 'react-icons/fa';
-import './Dashboard.css';
+  AppBar,
+  Badge,
+  Box,
+  Button,
+  Chip,
+  CssBaseline,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Toolbar,
+  Typography,
+  useTheme
+} from '@mui/material';
+
+// Material UI Icons
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import LayersIcon from '@mui/icons-material/Layers';
+import SettingsIcon from '@mui/icons-material/Settings';
+import LogoutIcon from '@mui/icons-material/Logout';
+import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
+import PeopleIcon from '@mui/icons-material/People';
+import DescriptionIcon from '@mui/icons-material/Description';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import AddIcon from '@mui/icons-material/Add';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+
+const drawerWidth = 240;
 
 function Dashboard() {
   // Dummy data
   const sessions = [
     { id: 1, name: 'AI Resume', description: true, resumeCount: 18 },
-    { id: 2, name: 'AI Resume', description: true, resumeCount: 18 },
-    { id: 3, name: 'AI Resume', description: true, resumeCount: 18 },
-    { id: 4, name: 'AI Resume', description: true, resumeCount: 18 },
-    { id: 5, name: 'AI Resume', description: true, resumeCount: 18 },
-    { id: 6, name: 'AI Resume', description: true, resumeCount: 18 },
-    { id: 7, name: 'AI Resume', description: true, resumeCount: 18 },
-    { id: 8, name: 'AI Resume', description: true, resumeCount: 18 },
+    { id: 2, name: 'Software Engineer Position', description: true, resumeCount: 24 },
+    { id: 3, name: 'Marketing Specialist', description: true, resumeCount: 12 },
+    { id: 4, name: 'Data Science Team', description: true, resumeCount: 18 },
+    { id: 5, name: 'UX Designer', description: true, resumeCount: 9 },
   ];
 
+  // State
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const theme = useTheme();
 
   // Function to toggle fullscreen
   const toggleFullScreen = () => {
@@ -84,107 +110,204 @@ function Dashboard() {
   }, []);
 
   return (
-    <div className="dashboard-container">
-      {/* Header */}
-      <header className="dashboard-header">
-        <div className="logo">
-          <FaBriefcase className="briefcase-icon" />
-          <h2>Job Application Ranking System</h2>
-        </div>
-        <div className="user-info">
-          <button
-            className="fullscreen-btn"
-            onClick={toggleFullScreen}
-            title={isFullScreen ? "Exit fullscreen" : "Enter fullscreen"}
+    <Box sx={{ display: 'flex', height: '100vh', bgcolor: '#f5f7fa', overflow: 'hidden' }}>
+      <CssBaseline />
+      {/* AppBar */}
+      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, boxShadow: '0 3px 10px rgba(0,0,0,0.05)' }}>
+        <Toolbar>
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            py: 0.5,
+            px: 2
+          }}>
+            <WorkOutlineIcon sx={{
+              color: theme.palette.primary.dark,
+              fontSize: 32
+            }} />
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{
+                fontWeight: 700,
+                letterSpacing: '0.02em',
+                color: theme.palette.primary.dark,
+                fontSize: '1.3rem'
+              }}
+            >
+              Job Application Ranking System
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 'auto' }}>
+            <Badge badgeContent={3} color="error">
+              <NotificationsIcon color="action" />
+            </Badge>
+            <IconButton onClick={toggleFullScreen}>
+              <FullscreenIcon />
+            </IconButton>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ borderRadius: '50%', minWidth: 0, width: 32, height: 32, p: 0 }}
+            >
+              <Typography variant="body2">HD</Typography>
+            </Button>
+          </Box>
+        </Toolbar>
+      </AppBar>
+
+      {/* Drawer */}
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          [`& .MuiDrawer-paper`]: {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+            border: 'none',
+            bgcolor: 'white',
+            boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.05)'
+          },
+        }}
+      >
+        <Toolbar />
+        <Box sx={{ overflow: 'auto', display: 'flex', flexDirection: 'column', height: '100%', pt: 2 }}>
+          <List>
+            <ListItem disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  <DashboardIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    <Typography sx={{ fontWeight: 'medium' }}>
+                      DASHBOARD
+                    </Typography>
+                  }
+                />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton selected sx={{
+                '&.Mui-selected': {
+                  bgcolor: '#e6f0f9',
+                  color: theme.palette.primary.main,
+                  borderLeft: `3px solid ${theme.palette.primary.main}`,
+                }
+              }}>
+                <ListItemIcon>
+                  <LayersIcon sx={{ color: theme.palette.primary.main }} />
+                </ListItemIcon>
+                <ListItemText primary="Working Sessions" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  <SettingsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Settings" />
+              </ListItemButton>
+            </ListItem>
+          </List>
+
+          <Box sx={{ mt: 'auto', mb: 2 }}>
+            <ListItem disablePadding>
+              <ListItemButton sx={{ color: theme.palette.text.secondary }}>
+                <ListItemIcon>
+                  <LogoutIcon sx={{ color: theme.palette.text.secondary }} />
+                </ListItemIcon>
+                <ListItemText primary="Log-out" />
+              </ListItemButton>
+            </ListItem>
+          </Box>
+        </Box>
+      </Drawer>
+
+      {/* Main Content */}
+      <Box component="main" sx={{
+        flexGrow: 1,
+        p: 3,
+        mt: '64px', // Leave space for AppBar
+        height: 'calc(100vh - 64px)', // Subtract AppBar height
+        overflow: 'auto'
+      }}>
+        {/* Main Header */}
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 2
+        }}>
+          <Typography variant="h6" fontWeight="medium">
+            Recently Session
+          </Typography>
+
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            size="medium"
+            color="primary"
           >
-            {isFullScreen ? <FaCompress /> : <FaExpand />}
-          </button>
-          <span>Huynh Duy Tin</span>
-        </div>
-      </header>
+            Add Session
+          </Button>
+        </Box>
 
-      <div className="dashboard-content">
-        {/* Sidebar */}
-        <aside className="dashboard-sidebar">
-          <nav className="sidebar-nav">
-            <ul>
-              <li className="nav-item">
-                <a href="#" className="nav-link">
-                  <FaTachometerAlt className="nav-icon" />
-                  <span>DASHBOARD</span>
-                </a>
-              </li>
-              <li className="nav-item active">
-                <a href="#" className="nav-link">
-                  <FaLayerGroup className="nav-icon" />
-                  <span>Working Sessions</span>
-                </a>
-              </li>
-              <li className="nav-item">
-                <a href="#" className="nav-link">
-                  <FaCog className="nav-icon" />
-                  <span>Settings</span>
-                </a>
-              </li>
-            </ul>
-          </nav>
-          <div className="logout-section">
-            <a href="#" className="logout-link">
-              <FaSignOutAlt className="logout-icon" />
-              <span>Log-out</span>
-            </a>
-          </div>
-        </aside>
-
-        {/* Main Content */}
-        <main className="dashboard-main">
-          <div className="main-header">
-            <h2>Recently Session</h2>
-            <button className="add-session-btn">
-              <span>Add Session</span>
-            </button>
-          </div>
-
-          {/* Sessions Table */}
-          <div className="sessions-table-container">
-            <table className="sessions-table">
-              <thead>
-                <tr>
-                  <th>Name Working Session</th>
-                  <th>Job Description</th>
-                  <th>Resumes</th>
-                  <th>ACTIONS</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sessions.map((session) => (
-                  <tr key={session.id}>
-                    <td>{session.name}</td>
-                    <td className="description-cell">
-                      {session.description && <FaCheckCircle className="check-icon" />}
-                    </td>
-                    <td>{session.resumeCount} Resumes</td>
-                    <td className="actions-cell">
-                      <button className="action-btn">
-                        <FaUserFriends className="action-icon" />
-                      </button>
-                      <button className="action-btn">
-                        <FaFileAlt className="action-icon" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </main>
-      </div>
-
-      {/* Footer */}
-      <footer className="dashboard-footer">
-        <p>© 2025 Job Application Ranking System</p>
-      </footer>
-    </div>
+        {/* Sessions Table */}
+        <TableContainer component={Paper} sx={{ boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.05)', borderRadius: 1 }}>
+          <Table sx={{ minWidth: 650 }} aria-label="sessions table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Name Working Session</TableCell>
+                <TableCell align="center">Job Description</TableCell>
+                <TableCell>Resumes</TableCell>
+                <TableCell>ACTIONS</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {sessions.map((session) => (
+                <TableRow
+                  key={session.id}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {session.name}
+                  </TableCell>
+                  <TableCell sx={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                    {session.description && <CheckCircleIcon sx={{ color: 'success.main', display: 'inline-block' }} />}
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={`${session.resumeCount} Resumes`}
+                      size="small"
+                      variant="outlined"
+                      color="primary"
+                      sx={{ borderRadius: 1 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Box sx={{ display: 'flex' }}>
+                      <IconButton size="small">
+                        <PeopleIcon color="primary" />
+                      </IconButton>
+                      <IconButton size="small">
+                        <DescriptionIcon color="primary" />
+                      </IconButton>
+                      <IconButton size="small">
+                        <MoreVertIcon color="primary" />
+                      </IconButton>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+    </Box>
   );
 }
 

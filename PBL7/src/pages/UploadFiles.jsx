@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  FaBriefcase,
   FaLayerGroup,
   FaTachometerAlt,
   FaCog,
@@ -9,6 +8,8 @@ import {
   FaInstagram
 } from 'react-icons/fa';
 import './UploadFiles.css';
+
+import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 
 function UploadFiles() {
   // Dummy data
@@ -52,7 +53,7 @@ function UploadFiles() {
       {/* Header */}
       <header className="upload-header">
         <div className="logo">
-          <FaBriefcase className="briefcase-icon" />
+          <WorkOutlineIcon className="workoutline-icon" />
           <h2>Job Application Ranking System</h2>
         </div>
         <div className="social-links">
