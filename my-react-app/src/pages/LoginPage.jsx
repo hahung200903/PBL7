@@ -2,7 +2,56 @@ import backgroundImg from "../assets/background.png";
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import { Typography, Box, TextField, Button } from '@mui/material';
 import EastIcon from '@mui/icons-material/East';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import React from "react";
+import { loginApi } from "../api/api-login";
+import { saveAccessToken } from "../utils/storage";
 export default function Login() {
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const handleSnackbarClose = () => {
+    setOpenSnackbar(false);
+  };
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setSnackbarMessage("Please enter both email and password.");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+      return;
+    }
+  
+    try {
+      const response = await loginApi(email, password);
+      console.log(">> Login response:", response);
+  
+      if (response.success && response.token) {
+        saveAccessToken(response.token);
+        setSnackbarMessage("Login successful!");
+        setSnackbarSeverity("success");
+        setOpenSnackbar(true);
+        navigate('/home');
+      } else {
+        setSnackbarMessage(response.message || "Invalid email or password.");
+        setSnackbarSeverity("error");
+        setOpenSnackbar(true);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setSnackbarMessage("An error occurred. Please try again.");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+    }
+  };
+  
+  
+
   return (
     <div style={styles.container}>
 
@@ -37,6 +86,8 @@ export default function Login() {
                 variant="outlined"
                 size="small"
                 autoComplete="off"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </Box>
 
@@ -47,6 +98,8 @@ export default function Login() {
                 type="password"
                 variant="outlined"
                 size="small"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </Box>
             <Box sx={{ mt: 1, textAlign: 'right' }}>
@@ -69,6 +122,7 @@ export default function Login() {
                 alignItems: 'center', 
                 paddingRight: '16px' // Đảm bảo icon không sát quá
               }}
+              onClick={handleLogin}
             >
               Sign In
               <EastIcon sx={{ fontSize: 20, ml: 1 }} /> {/* Cách icon khỏi chữ "Login" */}
@@ -78,7 +132,16 @@ export default function Login() {
       </div>
 
       <div style={styles.right}></div>
-
+      <Snackbar 
+        open={openSnackbar} 
+        autoHideDuration={3000} 
+        onClose={handleSnackbarClose} 
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} 
+      >
+        <MuiAlert variant='filled' onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </MuiAlert>
+      </Snackbar>
     </div>
   );
 }
