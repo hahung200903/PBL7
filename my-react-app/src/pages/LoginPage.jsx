@@ -29,7 +29,6 @@ export default function Login() {
   
     try {
       const response = await loginApi(email, password);
-      console.log(">> Login response:", response);
   
       if (response.success && response.token) {
         saveAccessToken(response.token);
