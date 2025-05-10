@@ -15,9 +15,6 @@ function SignIn() {
     e.preventDefault();
     // Handle login logic
     console.log({ email, password, rememberMe });
-
-    // For now, just navigate to dashboard without authentication
-    // In a real app, you would verify credentials first
     navigate('/dashboard');
   };
 
@@ -77,7 +74,6 @@ function SignIn() {
               </div>
               <a href="#" className="forgot-password">Forgot password</a>
             </div>
-
             <button type="submit" className="signin-button">
               Sign In <FaArrowRight />
             </button>

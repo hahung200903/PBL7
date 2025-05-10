@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   FaBriefcase,
   FaSignOutAlt,
@@ -8,7 +8,9 @@ import {
   FaUserFriends,
   FaFileAlt,
   FaCheckCircle,
-  FaPlus
+  FaPlus,
+  FaExpand,
+  FaCompress
 } from 'react-icons/fa';
 import './Dashboard.css';
 
@@ -25,6 +27,62 @@ function Dashboard() {
     { id: 8, name: 'AI Resume', description: true, resumeCount: 18 },
   ];
 
+  const [isFullScreen, setIsFullScreen] = useState(false);
+
+  // Function to toggle fullscreen
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      // Enter fullscreen
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+        setIsFullScreen(true);
+      } else if (document.documentElement.mozRequestFullScreen) {
+        document.documentElement.mozRequestFullScreen();
+        setIsFullScreen(true);
+      } else if (document.documentElement.webkitRequestFullscreen) {
+        document.documentElement.webkitRequestFullscreen();
+        setIsFullScreen(true);
+      } else if (document.documentElement.msRequestFullscreen) {
+        document.documentElement.msRequestFullscreen();
+        setIsFullScreen(true);
+      }
+    } else {
+      // Exit fullscreen
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+        setIsFullScreen(false);
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+        setIsFullScreen(false);
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+        setIsFullScreen(false);
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+        setIsFullScreen(false);
+      }
+    }
+  };
+
+  // Update fullscreen state when it changes outside our component
+  useEffect(() => {
+    const handleFullScreenChange = () => {
+      setIsFullScreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullScreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullScreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullScreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullScreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullScreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullScreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullScreenChange);
+    };
+  }, []);
+
   return (
     <div className="dashboard-container">
       {/* Header */}
@@ -34,6 +92,13 @@ function Dashboard() {
           <h2>Job Application Ranking System</h2>
         </div>
         <div className="user-info">
+          <button
+            className="fullscreen-btn"
+            onClick={toggleFullScreen}
+            title={isFullScreen ? "Exit fullscreen" : "Enter fullscreen"}
+          >
+            {isFullScreen ? <FaCompress /> : <FaExpand />}
+          </button>
           <span>Huynh Duy Tin</span>
         </div>
       </header>
