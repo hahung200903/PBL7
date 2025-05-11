@@ -9,8 +9,8 @@ import Dashboard from './pages/Dashboard.jsx'
 import EmailVerification from './pages/EmailVerification.jsx'
 import ForgotPassword from './pages/ForgotPassword.jsx'
 import ResetPassword from './pages/ResetPassword.jsx'
-import UploadFiles from './pages/UploadFiles.jsx'
-
+import Sessions from './pages/Sessions.jsx' 
+import Settings from './pages/Settings.jsx'
 // Create a custom theme
 const theme = createTheme({
   palette: {
@@ -120,7 +120,8 @@ createRoot(document.getElementById('root')).render(
           <Route path="/email-verification" element={<EmailVerification />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/upload-files" element={<UploadFiles />} />
+          <Route path="/sessions" element={<Sessions />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

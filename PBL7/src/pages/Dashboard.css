@@ -1,0 +1,287 @@
+/* Dashboard Layout */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  /* Ensure it takes full viewport width */
+  background-color: #f5f7fa;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  /* Prevent scrollbars on the main container */
+  position: fixed;
+  /* Fix the position to cover the entire viewport */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Header */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 2rem;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.briefcase-icon {
+  color: #0066cc;
+  font-size: 1.25rem;
+}
+
+.logo h2 {
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.user-info {
+  color: #333;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.fullscreen-btn {
+  background: none;
+  border: none;
+  color: #0066cc;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0.4rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.fullscreen-btn:hover {
+  background-color: #f0f7ff;
+}
+
+/* Content Layout */
+.dashboard-content {
+  display: flex;
+  flex: 1;
+}
+
+/* Sidebar */
+.dashboard-sidebar {
+  width: 220px;
+  background-color: #fff;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem 0;
+  height: calc(100vh - 64px - 40px);
+  /* Subtracting header and footer height */
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-item {
+  margin-bottom: 0.5rem;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 1.5rem;
+  color: #555;
+  text-decoration: none;
+  transition: background-color 0.2s;
+  gap: 10px;
+}
+
+.nav-icon {
+  font-size: 1rem;
+  min-width: 20px;
+}
+
+.nav-item.active .nav-link {
+  background-color: #e6f0f9;
+  color: #0066cc;
+  border-left: 3px solid #0066cc;
+}
+
+/* Add specific dashboard active style */
+.dashboard-nav-item.active .nav-link {
+  background-color: #e6f0f9;
+  color: #0066cc;
+  border-left: 3px solid #0066cc;
+}
+
+.logout-section {
+  padding: 0 1.5rem;
+  margin-top: auto;
+}
+
+.logout-link {
+  display: flex;
+  align-items: center;
+  color: #666;
+  text-decoration: none;
+  gap: 10px;
+}
+
+.logout-icon {
+  font-size: 1rem;
+}
+
+/* Main Content */
+.dashboard-main {
+  flex: 1;
+  padding: 1.5rem 2rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 64px - 40px);
+  /* Ensure content area fits within viewport */
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.main-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.add-session-btn {
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.2s;
+}
+
+.add-session-btn:hover {
+  background-color: #0052a3;
+}
+
+/* Sessions Table */
+.sessions-table-container {
+  background-color: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.sessions-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.sessions-table th {
+  background-color: #f0f3f7;
+  color: #666;
+  font-weight: 500;
+  text-align: left;
+  padding: 0.8rem 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.sessions-table td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #eaedf1;
+  color: #333;
+}
+
+.sessions-table tbody tr:hover {
+  background-color: #f9fafc;
+}
+
+.description-cell {
+  text-align: center;
+}
+
+.check-icon {
+  color: #28a745;
+  font-size: 1.1rem;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 10px;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0.3rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.action-btn:hover {
+  background-color: #f0f0f0;
+}
+
+/* Footer */
+.dashboard-footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: #fff;
+  color: #999;
+  font-size: 0.8rem;
+  border-top: 1px solid #eaedf1;
+}
+
+/* Responsive adjustments for fullscreen */
+@media (max-width: 768px) {
+  .dashboard-sidebar {
+    width: 180px;
+  }
+
+  .dashboard-main {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .dashboard-header {
+    padding: 0.6rem 1rem;
+  }
+
+  .logo h2 {
+    font-size: 0.9rem;
+  }
+
+  .dashboard-sidebar {
+    width: 160px;
+  }
+}
