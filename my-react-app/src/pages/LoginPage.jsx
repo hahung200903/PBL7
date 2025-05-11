@@ -9,10 +9,13 @@ import MuiAlert from '@mui/material/Alert';
 import React from "react";
 import { loginApi } from "../api/api-login";
 import { saveAccessToken } from "../utils/storage";
+import CircularProgress from '@mui/material/CircularProgress';
 export default function Login() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [isLoading, setIsLoading] = useState(false);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -27,15 +30,20 @@ export default function Login() {
       return;
     }
   
+    setIsLoading(true); // Bắt đầu loading
+  
     try {
       const response = await loginApi(email, password);
   
-      if (response.success && response.token) {
+      if (response.success) {
         saveAccessToken(response.token);
         setSnackbarMessage("Login successful!");
         setSnackbarSeverity("success");
         setOpenSnackbar(true);
-        navigate('/home');
+  
+        setTimeout(() => {
+          navigate("/home");
+        }, 800);
       } else {
         setSnackbarMessage(response.message || "Invalid email or password.");
         setSnackbarSeverity("error");
@@ -46,13 +54,38 @@ export default function Login() {
       setSnackbarMessage("An error occurred. Please try again.");
       setSnackbarSeverity("error");
       setOpenSnackbar(true);
+    } finally {
+      setIsLoading(false); // Tắt loading
     }
   };
+  
+  
   
   
 
   return (
     <div style={styles.container}>
+    {isLoading && (
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          backgroundColor: 'rgba(255,255,255,0.6)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+        }}
+      >
+        <Box sx={{ textAlign: 'center' }}>
+          <CircularProgress />
+          <Typography sx={{ mt: 2 }}>Processing, please wait...</Typography>
+        </Box>
+      </Box>
+    )}
 
       <div style={styles.left}>
         {/* Header trên cùng */}

@@ -3,6 +3,8 @@ import Login from "../pages/LoginPage";
 import ForgotPassword from "../pages/ForgotPasswordPage";
 import CreateAccount from "../pages/CreateAccountPage";
 import HomePage from "../pages/HomePage";
+import UploadPage from "../pages/UploadPage";
+import EditPage from "../pages/EditPage";
 const routes = [
   {
     path: "/",
@@ -20,6 +22,15 @@ const routes = [
     path: "/home",
     element: <HomePage />,
   },
+  {
+    path: "/upload",
+    element: <UploadPage />,
+  },
+  {
+    path: "/edit/:sessionId",
+    element: <EditPage />,
+  },
+  
 ]
 const router = createBrowserRouter(routes, {
   future: {

@@ -4,10 +4,26 @@ import { Typography, Box, TextField, Button, Checkbox, FormControlLabel, Dialog,
 import EastIcon from '@mui/icons-material/East';
 import React from "react";
 import { useState } from "react";
+import { signupApi } from "../api/api-login";
+import { useNavigate } from "react-router-dom";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 export default function CreateAccount() {
     const [openDialog, setOpenDialog] = useState(false);
     const [agreeTerms, setAgreeTerms] = useState(false);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleSnackbarClose = () => {
+        setOpenSnackbar(false);
+    };
     // Hàm mở dialog
     const handleClickOpen = () => {
         setOpenDialog(true);
@@ -18,10 +34,78 @@ export default function CreateAccount() {
         setOpenDialog(false);
     };
   
-
+    const handleSignup = async () => {
+      if (!email || !password || !confirmPassword) {
+        setSnackbarMessage("Please fill in all fields.");
+        setSnackbarSeverity("error");
+        setOpenSnackbar(true);
+        return;
+      }
+    
+      if (password !== confirmPassword) {
+        setSnackbarMessage("Passwords do not match.");
+        setSnackbarSeverity("error");
+        setOpenSnackbar(true);
+        return;
+      }
+    
+      if (!agreeTerms) {
+        setSnackbarMessage("You must agree to the Terms of Service.");
+        setSnackbarSeverity("error");
+        setOpenSnackbar(true);
+        return;
+      }
+    
+      setIsLoading(true); // Bắt đầu loading
+    
+      try {
+        const result = await signupApi(email, password);
+        if (result.success) {
+          setSnackbarMessage("Account created successfully. Please log in.");
+          setSnackbarSeverity("success");
+          setOpenSnackbar(true);
+    
+          setTimeout(() => {
+            navigate("/");
+          }, 2000);
+        } else {
+          setSnackbarMessage(result.message);
+          setSnackbarSeverity("error");
+          setOpenSnackbar(true);
+        }
+      } catch (error) {
+        setSnackbarMessage("An unexpected error occurred.");
+        setSnackbarSeverity("error");
+        setOpenSnackbar(true);
+        console.error("Error during signup:", error);
+      } finally {
+        setIsLoading(false); // Kết thúc loading
+      }
+    };
+    
   return (
     <div style={styles.container}>
-
+{isLoading && (
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          backgroundColor: 'rgba(255,255,255,0.6)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+        }}
+      >
+        <Box sx={{ textAlign: 'center' }}>
+          <CircularProgress />
+          <Typography sx={{ mt: 2 }}>Processing, please wait...</Typography>
+        </Box>
+      </Box>
+    )}
       <div style={styles.left}>
         {/* Header trên cùng */}
         <Box sx={styles.header}>
@@ -46,42 +130,40 @@ export default function CreateAccount() {
                 </a>
               </Typography>
             </Box>
+        
             <Box sx={{mt : 2, width: '100%', mb: 1,paddingBottom:'10px' }}>
-              <TextField
-                fullWidth
-                label="FullName"
-                variant="outlined"
-                size="small"
-                autoComplete="off"
-              />
-            </Box>
-            <Box sx={{mt : 2, width: '100%', mb: 1,paddingBottom:'10px' }}>
-              <TextField
-                fullWidth
-                label="Email"
-                variant="outlined"
-                size="small"
-                autoComplete="off"
-              />
+            <TextField
+              fullWidth
+              label="Email"
+              variant="outlined"
+              size="small"
+              autoComplete="off"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
             </Box>
 
             <Box sx={{ width: '100%', mb: 1 }}>
-              <TextField
-                fullWidth
-                label="Password"
-                type="password"
-                variant="outlined"
-                size="small"
-              />
+            <TextField
+              fullWidth
+              label="Password"
+              type="password"
+              variant="outlined"
+              size="small"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
             </Box>
             <Box sx={{mt:2, width: '100%', mb: 1 }}>
-              <TextField
-                fullWidth
-                label="Confirm Password"
-                type="password"
-                variant="outlined"
-                size="small"
-              />
+            <TextField
+              fullWidth
+              label="Confirm Password"
+              type="password"
+              variant="outlined"
+              size="small"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
             </Box>
 
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -111,6 +193,7 @@ export default function CreateAccount() {
             <Button
               fullWidth
               variant="contained"
+              onClick={handleSignup}
               sx={{ 
                 backgroundColor: '#0A65CC', 
                 textTransform: 'none', 
@@ -122,7 +205,7 @@ export default function CreateAccount() {
               }}
             >
               Sign In
-              <EastIcon sx={{ fontSize: 20, ml: 1 }} /> {/* Cách icon khỏi chữ "Login" */}
+              <EastIcon sx={{ fontSize: 20, ml: 1 }} /> 
             </Button>
           </div>
         </div>
@@ -152,6 +235,16 @@ export default function CreateAccount() {
             </Button>
         </DialogActions>
         </Dialog>
+        <Snackbar 
+          open={openSnackbar} 
+          autoHideDuration={3000} 
+          onClose={handleSnackbarClose} 
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} 
+        >
+          <MuiAlert variant='filled' onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+            {snackbarMessage}
+          </MuiAlert>
+        </Snackbar>
     </div>
   );
 }

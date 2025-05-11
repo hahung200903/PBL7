@@ -187,7 +187,8 @@ export default function HomePage() {
         fixedHeaderContent={fixedHeaderContent}
         itemContent={(index, row) => rowContent(index, row)}
 
-    />
+    /> 
+
         </Layout>
 
     </div>

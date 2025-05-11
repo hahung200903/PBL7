@@ -4,6 +4,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import SettingsIcon from '@mui/icons-material/Settings';
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import LogoutIcon from '@mui/icons-material/Logout';
+import { clearAccessToken } from "../utils/storage";
 const NAV_ITEMS = [
   { label: "Home", icon: <DashboardIcon />, path: "/home" },
   { label: "Setting", icon: <SettingsIcon />, path: "/setting" },
@@ -13,7 +14,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 export default function Layout({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
-  
+  const handleLogout = () => {
+    clearAccessToken();
+    navigate("/");
+  };
   return (
     <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
       <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
@@ -58,7 +62,7 @@ export default function Layout({ children }) {
           {/* Sidebar */}
           <Box
   sx={{
-    width: "20%",
+    width: "10%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
@@ -100,8 +104,7 @@ export default function Layout({ children }) {
   <Box
     onClick={() => {
       // Xử lý logout ở đây (xóa token, redirect...)
-      console.log("Logging out...");
-      navigate("/");
+      handleLogout();
     }}
     sx={{
       display: "flex",
