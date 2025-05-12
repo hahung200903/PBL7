@@ -21,101 +21,45 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { getSessionById } from "../api/api-session";
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
-import { getRanking } from "../api/api-session";
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
-import { patchSessionRankingResult } from "../api/api-session";
-export default function EditPage() {
+export default function RankingPage() {
   const { sessionId } = useParams();
-  const [resumes, setResumes] = useState([]);
   const [jdFile, setJdFile] = useState(null);
   const [sessionName, setSessionName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [topResume, setTopResume] = useState(null);
   const [rankingResult, setRankingResult] = useState(null);
   const navigate = useNavigate();
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-  const handleSnackbarClose = () => {
-    setOpenSnackbar(false);
-  };
-  const resumeOptions = resumes.length > 0 
-  ? Array.from({ length: resumes.length }, (_, i) => i + 1)
-  : [];
-
-
-
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       const result = await getSessionById(sessionId);
-      console.log("Result from getSessionById:", result);
+    //   console.log("Result from getSessionById:", result);
+  
       if (result.success) {
         setSessionName(result.data.metadata.session.sessionName);
-        setResumes(result.data.metadata.resumes);
-        
-        setRankingResult(result.data.metadata.session.rankingResult); // 👈 thêm dòng này
+  
+        const rankingRaw = result.data.metadata.session.rankingResult;
+        try {
+          const parsedRanking = typeof rankingRaw === 'string' ? JSON.parse(rankingRaw) : rankingRaw;
+          setRankingResult(parsedRanking); // ✅ Đảm bảo là mảng
+        } catch (err) {
+          console.error("Failed to parse rankingResult:", err);
+          setRankingResult([]); // fallback để không crash app
+        }
+  
         setJdFile(result.data.metadata.jd);
       } else {
         console.error(result.message);
       }
       setIsLoading(false);
     };
-
+  
     if (sessionId) {
       fetchData();
     }
   }, [sessionId]);
+  
    
     
-  const handleRanking = async () => {
-    if (!resumes.length || !jdFile) {
-      setSnackbarSeverity("error");
-      setSnackbarMessage("Please upload both resumes and a job description first.");
-      setOpenSnackbar(true);
-      return;
-    }
-  
-    if (!topResume) {
-      setSnackbarSeverity("error");
-      setSnackbarMessage("Please select a top resume before ranking.");
-      setOpenSnackbar(true);
-      return;
-    }
-  
-    try {
-      setIsLoading(true);
-      const result = await getRanking(topResume, resumes, jdFile);
-      console.log("Result from getRanking:", result);
-      if (result.success) {
-        const ranking = result.data.rankingResult;
-        setRankingResult(ranking);
-        setSnackbarSeverity("success");
-        setSnackbarMessage("Ranking completed successfully!");
-  
-        // ✅ Gọi API để cập nhật rankingResult vào session
-        const patchResult = await patchSessionRankingResult(sessionId, JSON.stringify(result.data));
-        if (!patchResult.success) {
-          console.error("Failed to update session ranking result:", patchResult.message);
-          setSnackbarSeverity("warning");
-          setSnackbarMessage("Ranking completed but failed to save.");
-        }
-      } else {
-        setSnackbarSeverity("error");
-        setSnackbarMessage(result.message || "Ranking failed.");
-      }
-    } catch (error) {
-      setSnackbarSeverity("error");
-      setSnackbarMessage("An error occurred during ranking.");
-      console.error("Error during ranking:", error);
-    } finally {
-      setIsLoading(false);
-      setOpenSnackbar(true);
-    }
-  };
   
   
     const VisuallyHiddenInput = styled('input')({
@@ -210,32 +154,13 @@ export default function EditPage() {
               {sessionName || "Untitled Session"}
             </Typography>
 
-            <Autocomplete
-              size="small"
-              options={resumeOptions}
-              value={topResume}
-              onChange={(event, newValue) => setTopResume(newValue)}
-              getOptionLabel={(option) => option.toString()} // 👈 Ép kiểu thành string
-              renderInput={(params) => (
-                <TextField {...params} label="Choose top resume" />
-              )}
-              sx={{ width: 200, backgroundColor: "white" }}
-              disabled={resumeOptions.length === 0}
-            />
-
           </Box>
 
 
 
                 <Box sx={{ display: "flex", gap: 1 }}>
                 <Button variant="text" onClick={()=>{navigate('/home')}}>Back</Button>
-                <Button 
-                  variant="contained" 
-                  disabled={rankingResult} 
-                  onClick={handleRanking}
-                >
-                  Ranking
-                </Button>
+
 
                 </Box>
             </Box>
@@ -248,33 +173,31 @@ export default function EditPage() {
                     variant="h6"
                     sx={{ fontWeight: 400, fontSize: 15, fontFamily: "Roboto" }}
                   >
-                    All resumes
+                    Ranking Score
                   </Typography>
                   
                 </Box>
                 <TableVirtuoso
-                    style={{ width: "100%", height: "calc(100vh - 250px)" }}
-                    data={resumes}
-                    components={VirtuosoTableComponents}
-                    fixedHeaderContent={() => (
-                      <StyledTableRow>
-                        <StyledTableCell align="left">Name File</StyledTableCell>
-                        <StyledTableCell align="center"width={50}>Actions</StyledTableCell>
-                      </StyledTableRow>
-                    )}
-                    itemContent={(index, row) => (
-                      <>
-                        <StyledTableCell align="left">{row.fileName}</StyledTableCell>
-                        <StyledTableCell align="center" >
-                          <Tooltip title="Delete">
-                            <IconButton disabled>
-                              <DeleteIcon />
-                            </IconButton>
-                          </Tooltip>
-                        </StyledTableCell>
-                      </>
-                    )}
+                style={{ width: "100%", height: "calc(100vh - 250px)" }}
+                data={rankingResult}
+                components={VirtuosoTableComponents}
+                fixedHeaderContent={() => (
+                    <StyledTableRow>
+                    <StyledTableCell align="left">File Name</StyledTableCell>
+                    <StyledTableCell align="center" width={300}>Score</StyledTableCell>
+                    </StyledTableRow>
+                )}
+                itemContent={(index, row) => (
+                    <>
+                      <StyledTableCell align="left">{row.fileName}</StyledTableCell>
+                      <StyledTableCell align="center">
+                        {typeof row.score === "number" ? row.score.toFixed(2) : "N/A"}
+                      </StyledTableCell>
+                    </>
+                  )}
+                  
                 />
+
               </Box>
 
               {/* Bên phải */}
@@ -315,16 +238,6 @@ export default function EditPage() {
               </Box>
             </Box>
           </Layout>
-          <Snackbar 
-            open={openSnackbar} 
-            autoHideDuration={3000} 
-            onClose={handleSnackbarClose} 
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} 
-          >
-            <MuiAlert variant='filled' onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
-              {snackbarMessage}
-            </MuiAlert>
-          </Snackbar>
       </div>
     );
 }

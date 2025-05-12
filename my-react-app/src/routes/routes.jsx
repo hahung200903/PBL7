@@ -5,6 +5,7 @@ import CreateAccount from "../pages/CreateAccountPage";
 import HomePage from "../pages/HomePage";
 import UploadPage from "../pages/UploadPage";
 import EditPage from "../pages/EditPage";
+import RankingPage from "../pages/RankingPage";
 const routes = [
   {
     path: "/",
@@ -29,6 +30,10 @@ const routes = [
   {
     path: "/edit/:sessionId",
     element: <EditPage />,
+  },
+  {
+    path: "/ranking/:sessionId",
+    element: <RankingPage />,
   },
   
 ]

@@ -70,4 +70,60 @@ export const addSession = async (resumes, jd, sessionName) => {
       };
     }
   };
+  const API_RANKING_URL = 'https://spdcn8qs-8001.asse.devtunnels.ms/api/rank';
+
+  export const getRanking = async (topResume, resumes, jd) => {
+    try {
+      const payload = {
+        topResume,
+        resumes,
+        jd,
+      };
+  
+      const response = await axios.post(API_RANKING_URL, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': getAccessToken(), // Thêm token ở đây
+        },
+      });
+  
+      console.log("Ranking response:", response.data);
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error) {
+      console.error("Ranking error:", error);
+      return {
+        success: false,
+        message: error.response?.data?.message || "Failed to get ranking results",
+      };
+    }
+  };
+  export const patchSessionRankingResult = async (sessionId, rankingResult) => {
+    try {
+      const response = await axios.patch(
+        `${API_TAIKHOAN}/session/${sessionId}`,
+        { rankingResult }, // payload dưới dạng JSON
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': getAccessToken(), // Gắn token
+          },
+        }
+      );
+  
+      console.log("Patch session response:", response.data);
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error) {
+      console.error("Patch session error:", error);
+      return {
+        success: false,
+        message: error.response?.data?.message || "Failed to update ranking result",
+      };
+    }
+  };
   

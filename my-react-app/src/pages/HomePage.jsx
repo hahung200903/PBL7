@@ -124,7 +124,7 @@ export default function HomePage() {
             </Tooltip>
             <Tooltip title="View Ranking">
               <span>
-                <IconButton disabled={!row.rankingResult}>
+                <IconButton disabled={!row.rankingResult}  onClick={() => navigate(`/ranking/${row._id}`)}>
                   <ReduceCapacityIcon sx={{ color: row.rankingResult ? "black" : "#9D9D9D" }} />
                 </IconButton>
               </span>

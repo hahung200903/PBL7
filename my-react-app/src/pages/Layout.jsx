@@ -52,7 +52,7 @@ export default function Layout({ children }) {
               marginRight: "50px",
             }}
           >
-            Huynh Duy Tin
+            User
           </Typography>
         </Box>
 
