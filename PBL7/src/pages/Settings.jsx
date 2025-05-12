@@ -5,21 +5,16 @@ import {
   Badge,
   Box,
   Button,
-  Chip,
   CssBaseline,
   Drawer,
-  FormControl,
   IconButton,
   InputAdornment,
-  InputLabel,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
   MenuItem,
-  OutlinedInput,
-  Select,
   Tab,
   Tabs,
   TextField,
@@ -37,7 +32,6 @@ import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import InstagramIcon from '@mui/icons-material/Instagram';
 import CancelIcon from '@mui/icons-material/Cancel';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
