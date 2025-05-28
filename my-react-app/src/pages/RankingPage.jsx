@@ -11,7 +11,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { TableVirtuoso } from "react-virtuoso";
 import Paper from '@mui/material/Paper';
-import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import { useState } from "react";
@@ -21,7 +20,21 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { getSessionById } from "../api/api-session";
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import SimpleStepper from "../components/Stepper";
 export default function RankingPage() {
+  const [openDialog, setOpenDialog] = useState(false);
+const [resumeToShow, setResumeToShow] = useState(null);
+const [jdToShow, setJdToShow] = useState(null);
+const [openJDDialog, setOpenJDDialog] = useState(false);
+const [dialogFileUrl, setDialogFileUrl] = useState(null);
+const [dialogTitle, setDialogTitle] = useState("");
+
+  const [resumes,setResumes]=useState(null);
   const { sessionId } = useParams();
   const [jdFile, setJdFile] = useState(null);
   const [sessionName, setSessionName] = useState("");
@@ -36,7 +49,7 @@ export default function RankingPage() {
   
       if (result.success) {
         setSessionName(result.data.metadata.session.sessionName);
-  
+        setResumes(result.data.metadata.resumes);
         const rankingRaw = result.data.metadata.session.rankingResult;
         try {
           const parsedRanking = typeof rankingRaw === 'string' ? JSON.parse(rankingRaw) : rankingRaw;
@@ -58,21 +71,6 @@ export default function RankingPage() {
     }
   }, [sessionId]);
   
-   
-    
-  
-  
-    const VisuallyHiddenInput = styled('input')({
-      clip: 'rect(0 0 0 0)',
-      clipPath: 'inset(50%)',
-      height: 1,
-      overflow: 'hidden',
-      position: 'absolute',
-      bottom: 0,
-      left: 0,
-      whiteSpace: 'nowrap',
-      width: 1,
-    });
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
           [`&.${tableCellClasses.head}`]: {
             color: theme.palette.common.white,
@@ -132,6 +130,7 @@ export default function RankingPage() {
                 </Box>
           )}
           <Layout>
+            <SimpleStepper currentStep={2} />
             <Box
               sx={{
               display: "flex",
@@ -185,6 +184,7 @@ export default function RankingPage() {
                     <StyledTableRow>
                     <StyledTableCell align="left">File Name</StyledTableCell>
                     <StyledTableCell align="center" width={300}>Score</StyledTableCell>
+                    <StyledTableCell align="center" width={100}>Action</StyledTableCell>
                     </StyledTableRow>
                 )}
                 itemContent={(index, row) => (
@@ -192,6 +192,26 @@ export default function RankingPage() {
                       <StyledTableCell align="left">{row.fileName}</StyledTableCell>
                       <StyledTableCell align="center">
                         {typeof row.score === "number" ? row.score.toFixed(2) : "N/A"}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                      <Tooltip title="View file">
+                      <IconButton
+  onClick={() => {
+    const matchedResume = resumes?.find(r => r.fileName === row.fileName);
+    if (matchedResume?.fileUrl) {
+      setResumeToShow(matchedResume);
+      setJdToShow(jdFile); // hoặc tìm JD phù hợp nếu có nhiều JD
+      setOpenDialog(true);
+    } else {
+      alert("File URL not found for this resume.");
+    }
+  }}
+>
+  <VisibilityIcon />
+</IconButton>
+
+
+                        </Tooltip>
                       </StyledTableCell>
                     </>
                   )}
@@ -228,15 +248,97 @@ export default function RankingPage() {
                     }}
                   >
                     <Typography sx={{ fontSize: 14 }}>{jdFile.fileName}</Typography>
-                    <Tooltip title="Delete">
-                      <IconButton disabled>
-                        <DeleteIcon />
+                    <Tooltip title="View file">
+                    <IconButton
+                        onClick={() => {
+                          setDialogFileUrl(jdFile.fileUrl);
+                          setDialogTitle(jdFile.fileName);
+                          setOpenJDDialog(true);
+                          
+                  
+                        }}
+                      >
+                        <VisibilityIcon />
                       </IconButton>
                     </Tooltip>
                   </Box>
                 )}
               </Box>
             </Box>
+            <Dialog
+  open={openDialog}
+  onClose={() => setOpenDialog(false)}
+  fullWidth
+  maxWidth="xl"
+>
+  <DialogTitle>Resume & Job Description</DialogTitle>
+  <DialogContent dividers sx={{ height: "80vh", p: 0 }}>
+    <Box sx={{ display: "flex", height: "100%" }}>
+      {/* Resume bên trái */}
+      <Box sx={{ flex: 1, borderRight: "1px solid #ccc" }}>
+        <Box sx={{ p: 1, borderBottom: "1px solid #eee" }}>
+          <Typography variant="subtitle1">{resumeToShow?.fileName}</Typography>
+        </Box>
+        {resumeToShow?.fileUrl ? (
+          <iframe
+            src={resumeToShow.fileUrl}
+            title="Resume"
+            width="100%"
+            height="100%"
+            style={{ border: "none" }}
+          />
+        ) : (
+          <Typography sx={{ p: 2 }}>Không tìm thấy file Resume.</Typography>
+        )}
+      </Box>
+
+      {/* JD bên phải */}
+      <Box sx={{ flex: 1 }}>
+        <Box sx={{ p: 1, borderBottom: "1px solid #eee" }}>
+          <Typography variant="subtitle1">{jdToShow?.fileName}</Typography>
+        </Box>
+        {jdToShow?.fileUrl ? (
+          <iframe
+            src={jdToShow.fileUrl}
+            title="JD"
+            width="100%"
+            height="100%"
+            style={{ border: "none" }}
+          />
+        ) : (
+          <Typography sx={{ p: 2 }}>Không tìm thấy file JD.</Typography>
+        )}
+      </Box>
+    </Box>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setOpenDialog(false)}>Close</Button>
+  </DialogActions>
+</Dialog>
+
+<Dialog
+  open={openJDDialog}
+  onClose={() => setOpenJDDialog(false)}
+  fullWidth
+  maxWidth="md"
+>
+  <DialogTitle>{dialogTitle}</DialogTitle>
+  <DialogContent dividers sx={{ height: "80vh", p: 0 }}>
+    {dialogFileUrl && (
+      <iframe
+        src={dialogFileUrl}
+        title="File Viewer"
+        width="100%"
+        height="100%"
+        style={{ border: "none" }}
+      />
+    )}
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setOpenJDDialog(false)}>Close</Button>
+  </DialogActions>
+</Dialog>
+
           </Layout>
       </div>
     );

@@ -1,3 +1,4 @@
+import { jwtDecode } from "jwt-decode"
 export const getAccessToken = () => {
   const token = sessionStorage.getItem('accessToken');
   return token ? tokenBear(token) : '';
@@ -18,3 +19,9 @@ export const tokenBear = (token) => {
 export const clearAccessToken = () => {
   sessionStorage.removeItem('accessToken');
 };
+export const getEmail = () => {
+  const result = sessionStorage.getItem('accessToken').toString();
+  const decodedToken = jwtDecode(result);
+  const email = decodedToken.email;
+  return email;
+}

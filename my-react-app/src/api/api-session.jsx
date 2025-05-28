@@ -70,7 +70,7 @@ export const addSession = async (resumes, jd, sessionName) => {
       };
     }
   };
-  const API_RANKING_URL = 'https://spdcn8qs-8001.asse.devtunnels.ms/api/rank';
+  const API_RANKING_URL = 'http://103.90.226.249:8001/api/rank';
 
   export const getRanking = async (topResume, resumes, jd) => {
     try {
@@ -123,6 +123,44 @@ export const addSession = async (resumes, jd, sessionName) => {
       return {
         success: false,
         message: error.response?.data?.message || "Failed to update ranking result",
+      };
+    }
+  };
+  export const deleteSession = async (id) => {
+    try {
+      const response = await axios.delete(`${API_TAIKHOAN}/session/${id}`, {
+        headers: {
+          'Authorization': getAccessToken(), // Gắn token nếu API cần
+        },
+      });
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error) {
+      console.error("Delete session error:", error);
+      return {
+        success: false,
+        message: error.response?.data?.message || "Failed to delete session",
+      };
+    }
+  };
+  export const deleteResume = async (id) => {
+    try {
+      const response = await axios.delete(`${API_TAIKHOAN}/resume/${id}`, {
+        headers: {
+          'Authorization': getAccessToken(), // Gắn token nếu API cần
+        },
+      });
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error) {
+      console.error("Delete session error:", error);
+      return {
+        success: false,
+        message: error.response?.data?.message || "Failed to delete session",
       };
     }
   };

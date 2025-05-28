@@ -21,9 +21,19 @@ import { useNavigate } from "react-router-dom";
 import { getSession } from '../api/api-session';
 import { useEffect, useState } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { deleteSession } from '../api/api-session';
+
 export default function HomePage() {
     const [sessions, setSessions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+    const handleSnackbarClose = () => {
+
+        setOpenSnackbar(false);
+      };
     useEffect(() => {
       const fetchSessions = async () => {
         setIsLoading(true);
@@ -38,7 +48,27 @@ export default function HomePage() {
   
       fetchSessions();
     }, []);
+    const showSnackbar = (message, severity = "success") => {
+      setSnackbarMessage(message);
+      setSnackbarSeverity(severity);
+      setOpenSnackbar(true);
+    };
+    
     const navigate = useNavigate();
+    const handleDelete = async (id) => {
+      const confirm = window.confirm("Are you sure you want to delete this session?");
+      if (!confirm) return;
+    
+      const result = await deleteSession(id);
+      if (result.success) {
+        setSessions(prev => prev.filter(session => session._id !== id));
+        showSnackbar("Delete session successfully", "success");
+      } else {
+        showSnackbar(result.message || "Failed to delete session", "error");
+      }
+    };
+    
+    
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
           backgroundColor: "#0071A6",
@@ -117,6 +147,7 @@ export default function HomePage() {
           <StyledTableCell key="numOfRe" align="center">{row.numberOfResumes}</StyledTableCell>,
           <StyledTableCell key="createdAt" align="center">{formattedDate}</StyledTableCell>,
           <StyledTableCell key="actions" align="center" width={150}>
+            
            <Tooltip title="View">
               <IconButton onClick={() => navigate(`/edit/${row._id}`)}>
                 <FindInPageIcon sx={{ color: "black" }} />
@@ -129,6 +160,12 @@ export default function HomePage() {
                 </IconButton>
               </span>
             </Tooltip>
+            <Tooltip title="Delete Session">
+              <IconButton onClick={() => handleDelete(row._id)}>
+                <DeleteIcon sx={{ color: "black" }} />
+              </IconButton>
+            </Tooltip>
+
           </StyledTableCell>,
         ];
       }
@@ -189,6 +226,16 @@ export default function HomePage() {
 
     />
         </Layout>
+        <Snackbar 
+            open={openSnackbar} 
+            autoHideDuration={3000} 
+            onClose={handleSnackbarClose} 
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} 
+          >
+            <MuiAlert variant='filled' onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+              {snackbarMessage}
+            </MuiAlert>
+          </Snackbar>
 
     </div>
   );

@@ -5,6 +5,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { clearAccessToken } from "../utils/storage";
+import { getEmail } from "../utils/storage";
 const NAV_ITEMS = [
   { label: "Home", icon: <DashboardIcon />, path: "/home" },
   { label: "Setting", icon: <SettingsIcon />, path: "/setting" },
@@ -14,6 +15,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 export default function Layout({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const email = getEmail();
   const handleLogout = () => {
     clearAccessToken();
     navigate("/");
@@ -46,14 +48,16 @@ export default function Layout({ children }) {
           <Typography
             variant="h6"
             sx={{
-              fontWeight: 600,
-              fontSize: 20,
+              fontWeight: 500,
+              fontSize: 16,
               fontFamily: "Roboto",
               marginRight: "50px",
+              color: "#0A65CC",
             }}
           >
-            User
+            {email || "Guest"}
           </Typography>
+
         </Box>
 
         {/* Content */}
