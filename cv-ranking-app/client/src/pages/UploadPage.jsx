@@ -1,6 +1,6 @@
 import Layout from "./Layout";
 import React from "react";
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, DialogActions } from "@mui/material";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
@@ -22,7 +22,11 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from "react-router-dom";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { Dialog, DialogTitle, DialogContent } from '@mui/material';
+import SimpleStepper from "../components/Stepper";
 export default function UploadPage() {
+  const [openDialog, setOpenDialog] = useState(false);
   const [resumes, setResumes] = useState([]);
   const [jdFile, setJdFile] = useState(null);
   const [sessionName, setSessionName] = useState("");
@@ -31,6 +35,8 @@ export default function UploadPage() {
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [pdfUrl, setPdfUrl] = useState(null);
+
   const handleSnackbarClose = () => {
     setOpenSnackbar(false);
   };
@@ -41,6 +47,11 @@ export default function UploadPage() {
   const handleDeleteJD = () => {
     setJdFile(null);
   };
+  const handleViewResume = (file) => {
+    setPdfUrl(URL.createObjectURL(file));
+    setOpenDialog(true);
+  };
+  
 
     
     const handleResumeUpload = (event) => {
@@ -137,6 +148,7 @@ export default function UploadPage() {
     };
     return (
       <div style={styles.container}>
+        
           {isLoading && (
                 <Box
                   sx={{
@@ -159,6 +171,8 @@ export default function UploadPage() {
                 </Box>
           )}
           <Layout>
+            <SimpleStepper currentStep={0} />
+            <br />
             <Box
               sx={{
               display: "flex",
@@ -208,19 +222,26 @@ export default function UploadPage() {
                   </Button>
                 </Box>
                 <TableVirtuoso
-                    style={{ width: "100%", height: "calc(100vh - 250px)" }}
+                    style={{ width: "100%", height: "calc(96vh - 250px)" }}
                     data={resumes}
                     components={VirtuosoTableComponents}
                     fixedHeaderContent={() => (
                       <StyledTableRow>
                         <StyledTableCell align="left">Name File</StyledTableCell>
-                        <StyledTableCell align="center"width={50}>Actions</StyledTableCell>
+                        <StyledTableCell align="center"width={100}>Actions</StyledTableCell>
                       </StyledTableRow>
                     )}
                     itemContent={(index, row) => (
                       <>
                         <StyledTableCell align="left">{row.name}</StyledTableCell>
+
                         <StyledTableCell align="center" >
+                        <Tooltip title="View file">
+                        <IconButton onClick={() => handleViewResume(row.file)}>
+                          <VisibilityIcon />
+                        </IconButton>
+
+                      </Tooltip>
                           <Tooltip title="Delete">
                             <IconButton onClick={() => handleDeleteResume(index)}>
                               <DeleteIcon />
@@ -260,29 +281,62 @@ export default function UploadPage() {
 
                 {/* Hiển thị file JD nếu có */}
                 {jdFile && (
-                  <Box
-                    sx={{
-                      mt: 2,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      backgroundColor: '#fff',
-                      padding: '8px 12px',
-                      borderRadius: '4px',
-                      border: '1px solid #ccc',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                    }}
-                  >
-                    <Typography sx={{ fontSize: 14 }}>{jdFile.name}</Typography>
-                    <Tooltip title="Delete">
-                      <IconButton onClick={handleDeleteJD}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </Box>
-                )}
+  <Box
+    sx={{
+      mt: 2,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      backgroundColor: '#fff',
+      padding: '8px 12px',
+      borderRadius: '4px',
+      border: '1px solid #ccc',
+      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    }}
+  >
+    <Typography sx={{ fontSize: 14 }}>{jdFile.name}</Typography>
+
+    <Box sx={{ display: 'flex', gap: 1 }}>
+      <Tooltip title="View file">
+        <IconButton onClick={() => handleViewResume(jdFile.file)}>
+          <VisibilityIcon />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Delete">
+        <IconButton onClick={handleDeleteJD}>
+          <DeleteIcon />
+        </IconButton>
+      </Tooltip>
+    </Box>
+  </Box>
+)}
+
               </Box>
             </Box>
+            ;
+
+            <Dialog
+  open={openDialog}
+  onClose={() => setOpenDialog(false)}
+  fullWidth
+  maxWidth="md"
+>
+  <DialogTitle>View File</DialogTitle>
+  <DialogContent dividers sx={{ height: "80vh", p: 0 }}>
+    {pdfUrl && (
+      <iframe
+        src={pdfUrl}
+        title="File Viewer"
+        width="100%"
+        height="100%"
+        style={{ border: "none" }}
+      />
+    )}
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setOpenDialog(false)}>Close</Button>
+  </DialogActions>
+</Dialog>
           </Layout>
           <Snackbar 
             open={openSnackbar} 

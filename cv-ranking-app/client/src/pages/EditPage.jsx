@@ -27,6 +27,13 @@ import { getRanking } from "../api/api-session";
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { patchSessionRankingResult } from "../api/api-session";
+import SimpleStepper from "../components/Stepper";
+import { deleteResume } from "../api/api-session";
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 export default function EditPage() {
   const { sessionId } = useParams();
   const [resumes, setResumes] = useState([]);
@@ -39,6 +46,15 @@ export default function EditPage() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [dialogFileUrl, setDialogFileUrl] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [selectedResumeId, setSelectedResumeId] = useState(null);
+  const handleDeleteResumeClick = (resumeId) => {
+    setSelectedResumeId(resumeId);
+    setOpenConfirmDialog(true);
+  };
+  
   const handleSnackbarClose = () => {
     setOpenSnackbar(false);
   };
@@ -57,7 +73,7 @@ export default function EditPage() {
         setSessionName(result.data.metadata.session.sessionName);
         setResumes(result.data.metadata.resumes);
         
-        setRankingResult(result.data.metadata.session.rankingResult); // 👈 thêm dòng này
+        setRankingResult(result.data.metadata.session.rankingResult); 
         setJdFile(result.data.metadata.jd);
       } else {
         console.error(result.message);
@@ -89,14 +105,14 @@ export default function EditPage() {
     try {
       setIsLoading(true);
       const result = await getRanking(topResume, resumes, jdFile);
-      console.log("Result from getRanking:", result);
       if (result.success) {
         const ranking = result.data.rankingResult;
         setRankingResult(ranking);
         setSnackbarSeverity("success");
         setSnackbarMessage("Ranking completed successfully!");
+        navigate(`/ranking/${sessionId}`);
   
-        // ✅ Gọi API để cập nhật rankingResult vào session
+        //Gọi API để cập nhật rankingResult vào session
         const patchResult = await patchSessionRankingResult(sessionId, JSON.stringify(result.data));
         if (!patchResult.success) {
           console.error("Failed to update session ranking result:", patchResult.message);
@@ -164,6 +180,30 @@ export default function EditPage() {
       TableBody: React.forwardRef((props, ref) => <TableBody {...props} ref={ref} />),
       TableCell: StyledTableCell, // Sử dụng StyledTableCell bạn đã định nghĩa
     };
+    const handleConfirmDelete = async () => {
+      if (!selectedResumeId) return;
+    
+      const response = await deleteResume(selectedResumeId);
+      if (response.success) {
+        setSnackbarSeverity("success");
+        setSnackbarMessage("Resume deleted successfully!");
+        setOpenSnackbar(true);
+    
+        // Gọi lại API để fetch dữ liệu mới
+        const updated = await getSessionById(sessionId);
+        if (updated.success) {
+          setResumes(updated.data.metadata.resumes);
+        }
+      } else {
+        setSnackbarSeverity("error");
+        setSnackbarMessage("Failed to delete resume.");
+        setOpenSnackbar(true);
+      }
+    
+      setOpenConfirmDialog(false);
+      setSelectedResumeId(null);
+    };
+    
     return (
       <div style={styles.container}>
           {isLoading && (
@@ -188,6 +228,8 @@ export default function EditPage() {
                 </Box>
           )}
           <Layout>
+            <SimpleStepper currentStep={1} />
+            <br/>
             <Box
               sx={{
               display: "flex",
@@ -259,15 +301,29 @@ export default function EditPage() {
                     fixedHeaderContent={() => (
                       <StyledTableRow>
                         <StyledTableCell align="left">Name File</StyledTableCell>
-                        <StyledTableCell align="center"width={50}>Actions</StyledTableCell>
+                        <StyledTableCell align="center"width={100}>Actions</StyledTableCell>
                       </StyledTableRow>
                     )}
                     itemContent={(index, row) => (
                       <>
                         <StyledTableCell align="left">{row.fileName}</StyledTableCell>
                         <StyledTableCell align="center" >
+                        <Tooltip title="View file">
+                    <IconButton
+                        onClick={() => {
+                          setDialogFileUrl(row.fileUrl);
+                          setOpenDialog(true);
+                        }}
+                      >
+                        <VisibilityIcon />
+                      </IconButton>
+                    </Tooltip>
                           <Tooltip title="Delete">
-                            <IconButton disabled>
+                            <IconButton 
+                              disabled={rankingResult} 
+                              onClick={()=>handleDeleteResumeClick(row._id)}
+
+                            >
                               <DeleteIcon />
                             </IconButton>
                           </Tooltip>
@@ -305,15 +361,59 @@ export default function EditPage() {
                     }}
                   >
                     <Typography sx={{ fontSize: 14 }}>{jdFile.fileName}</Typography>
-                    <Tooltip title="Delete">
-                      <IconButton disabled>
-                        <DeleteIcon />
+                    
+                    <Tooltip title="View file">
+                    <IconButton
+                        onClick={() => {
+                          setDialogFileUrl(jdFile.fileUrl);
+                          setOpenDialog(true);
+                        }}
+                      >
+                        <VisibilityIcon />
                       </IconButton>
                     </Tooltip>
                   </Box>
                 )}
               </Box>
             </Box>
+            <Dialog
+  open={openConfirmDialog}
+  onClose={() => setOpenConfirmDialog(false)}
+>
+  <DialogTitle>Confirm Deletion</DialogTitle>
+  <DialogContent>
+    <Typography>Are you sure you want to delete this resume?</Typography>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setOpenConfirmDialog(false)}>Cancel</Button>
+    <Button onClick={handleConfirmDelete} color="error" variant="contained">
+      Delete
+    </Button>
+  </DialogActions>
+</Dialog>
+
+            <Dialog
+  open={openDialog}
+  onClose={() => setOpenDialog(false)}
+  fullWidth
+  maxWidth="md"
+>
+  <DialogTitle>View File</DialogTitle>
+  <DialogContent dividers sx={{ height: "80vh", p: 0 }}>
+    {dialogFileUrl && (
+      <iframe
+        src={dialogFileUrl}
+        title="File Viewer"
+        width="100%"
+        height="100%"
+        style={{ border: "none" }}
+      />
+    )}
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setOpenDialog(false)}>Close</Button>
+  </DialogActions>
+</Dialog>
           </Layout>
           <Snackbar 
             open={openSnackbar} 
