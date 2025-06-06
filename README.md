@@ -17,6 +17,13 @@ cd client
 npm install
 cd ..
 
+# Install Python 3.11 and set up backend virtual environment
+cd python-backend
+<path-to-python311> -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+cd ..
+
 # Start the app (Electron + Vite React)
 npm run dev
 ```

@@ -93,7 +93,7 @@ export default function Login() {
         <BusinessCenterIcon sx={{ fontSize: 32, mr: 1, color: '#0A65CC' }} />
 
           <Typography variant="h6" sx={{ fontWeight: 600, fontSize: 20, fontFamily: 'Roboto' }}>
-            Job Application Ranking System
+            Resume Ranking Application
           </Typography>
         </Box>
 
