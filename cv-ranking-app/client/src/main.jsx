@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import CreateAccountPage from './pages/CreateAccountPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
@@ -12,7 +12,7 @@ import SettingPage from './pages/SettingPage';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/register" element={<CreateAccountPage />} />
@@ -23,6 +23,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/ranking/:sessionId" element={<RankingPage />} />
         <Route path="/setting" element={<SettingPage />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   </React.StrictMode>
 );

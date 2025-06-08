@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.docs import get_swagger_ui_html, get_redoc_html
 from pydantic import BaseModel
 from typing import List, Dict, Any
 
@@ -8,8 +9,18 @@ from re_ranking import compute_resume_scores_crossencoder
 from util import verify_token
 from extract_feature_tfidf import extract_feature
 
-app = FastAPI()
+# Enable docs to work offline
+app = FastAPI(docs_url=None, redoc_url=None)
 
+@app.get("/docs", include_in_schema=False)
+def custom_swagger_ui_html():
+    return get_swagger_ui_html(openapi_url="/openapi.json", title="Swagger UI")
+
+@app.get("/redoc", include_in_schema=False)
+def custom_redoc_html():
+    return get_redoc_html(openapi_url="/openapi.json", title="ReDoc")
+
+# Usual CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=['*'],
@@ -28,7 +39,7 @@ class RankingDto(BaseModel):
     topResume: int
 
 @app.post('/api/rank')
-def ranking (dto: RankingDto, current_user: dict = Depends(verify_token)):
+def ranking(dto: RankingDto, current_user: dict = Depends(verify_token)):
     resumes_data = dto.resumes
     jd_data = dto.jd
     top_resumes = dto.topResume
@@ -42,10 +53,10 @@ def ranking (dto: RankingDto, current_user: dict = Depends(verify_token)):
     else:
         top_ranking_resumes = compute_resume_scores(resume_feature_list, jd_feature, top_resumes + 5)
 
-    # Lấy danh sách resume_id từ top_ranking_resumes
+    # Get top resume ids
     top_resume_ids = [item['id'] for item in top_ranking_resumes]
 
-    # Lọc ra các resumes có _id nằm trong top_resume_ids
+    # Filter resumes for reranking
     matched_resumes = [resume for resume in resumes_data if resume['_id'] in top_resume_ids]
     top_reranking_resumes = compute_resume_scores_crossencoder(matched_resumes, jd_data, top_resumes)
 

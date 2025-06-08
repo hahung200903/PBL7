@@ -22,7 +22,7 @@ cd python-backend
 <path-to-python311> -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
-cd ..
+uvicorn main:app --reload
 
 # Start the app (Electron + Vite React)
 npm run dev

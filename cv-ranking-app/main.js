@@ -35,7 +35,7 @@ function createWindow() {
       contextIsolation: false,
     },
   });
-  win.loadURL('http://localhost:5173');
+  win.loadFile(path.join(__dirname, 'client/dist/index.html'));
 }
 
 app.whenReady().then(() => {
