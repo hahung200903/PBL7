@@ -6,9 +6,12 @@ import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { clearAccessToken } from "../utils/storage";
 import { getEmail } from "../utils/storage";
+import TableChartIcon from '@mui/icons-material/TableChart';
 const NAV_ITEMS = [
+  { label: "Dashboard", icon: <TableChartIcon />, path: "/dashboard" },
   { label: "Home", icon: <DashboardIcon />, path: "/home" },
   { label: "Setting", icon: <SettingsIcon />, path: "/setting" },
+  
 ];
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -130,7 +133,17 @@ export default function Layout({ children }) {
 </Box>
 
           {/* Main content */}
-          <Box sx={{ flex: 1, p: 3 }}>{children}</Box>
+          <Box
+  sx={{
+    flex: 1,
+    p: 3,
+    height: "100%",
+    overflowY: "auto",
+    boxSizing: "border-box"
+  }}
+>
+  {children}
+</Box>
         </Box>
       </Box>
     </Box>

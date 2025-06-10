@@ -24,7 +24,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import FindInPageIcon from '@mui/icons-material/FindInPage';
 import SimpleStepper from "../components/Stepper";
 export default function RankingPage() {
   const [openDialog, setOpenDialog] = useState(false);
@@ -207,7 +207,7 @@ const [dialogTitle, setDialogTitle] = useState("");
     }
   }}
 >
-  <VisibilityIcon />
+  <FindInPageIcon />
 </IconButton>
 
 
@@ -258,7 +258,7 @@ const [dialogTitle, setDialogTitle] = useState("");
                   
                         }}
                       >
-                        <VisibilityIcon />
+                        <FindInPageIcon />
                       </IconButton>
                     </Tooltip>
                   </Box>

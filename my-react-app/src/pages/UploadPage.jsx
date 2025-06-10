@@ -84,13 +84,15 @@ export default function UploadPage() {
     
       const result = await addSession(resumes, jdFile, sessionName);
       setIsLoading(false); // Tắt loading
-    
+      console.log(result.data.metadata.sessionData._id);
+      
       if (result.success) {
+        
         setSnackbarMessage("Session added successfully!");
         setSnackbarSeverity("success");
         setOpenSnackbar(true);
         setTimeout(() => {
-          navigate("/home");
+          navigate(`/edit/${result.data.metadata.sessionData._id}`);
         }, 800);
       } else {
         setSnackbarMessage(result.message || "Something went wrong.");

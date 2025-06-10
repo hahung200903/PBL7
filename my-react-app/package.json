@@ -17,12 +17,17 @@
     "@mui/styled-engine-sc": "^7.1.0",
     "axios": "^1.9.0",
     "cors": "^2.8.5",
+    "d3-scale": "^4.0.2",
+    "d3-scale-chromatic": "^3.1.0",
     "jwt-decode": "^4.0.0",
-    "pdfjs-dist": "^5.2.133",
+    "pdfjs-dist": "^5.3.31",
     "react": "^19.1.0",
+    "react-d3-cloud": "^1.0.6",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.0",
     "react-virtuoso": "^4.12.7",
+    "react-wordcloud": "^1.2.7",
+    "recharts": "^2.15.3",
     "styled-components": "^6.1.18"
   },
   "devDependencies": {
