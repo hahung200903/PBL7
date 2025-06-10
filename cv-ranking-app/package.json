@@ -6,7 +6,8 @@
     "dev": "concurrently \"npm:dev:*\"",
     "dev:main": "electron .",
     "dev:renderer": "cd client && npm run dev",
-    "start": "electron ."
+    "start": "electron .",
+    "dist": "electron-builder"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +15,25 @@
   "description": "",
   "devDependencies": {
     "concurrently": "^8.2.2",
-    "electron": "^36.3.1"
+    "electron": "^36.3.1",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.PBL7.cvapp",
+    "productName": "CV Ranking App",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "python-backend/dist/main.exe",
+      "client/dist/**",
+      "node_modules/**",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis"
+    }
   }
 }
